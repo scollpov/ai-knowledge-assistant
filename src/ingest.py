@@ -14,7 +14,9 @@ for document_path in DOCUMENTS_DIR.glob("*.txt"):
     with open(document_path, "r") as file:
         text = file.read()
 
-    chunks = chunk_text(text, chunk_size=300)
+    chunks = chunk_text(text, 
+        chunk_size=300,
+        overlap_sentences=1)
 
     for chunk in chunks:
         print(f"Embedding chunk: {chunk[:80]}...")

@@ -1,25 +1,29 @@
-def chunk_text(text: str, chunk_size: int = 300) -> list[str]:
-    chunks = []
+def chunk_text(text: str, chunk_size: int = 300, overlap_sentences: int = 1) -> list[str]:
 
-    current_chunk = ""
+    sentences = [
+        sentence.strip()
+        for sentence in text.split(".")
+        if sentence.strip()
+    ]
 
-    sentences = text.split(".")
+    chunks = []	
+    current_chunk = []
 
     for sentence in sentences:
-        sentence = sentence.strip()
+        sentence = sentence + "."
 
-        if not sentence:
-            continue
-
-        candidate = current_chunk + sentence + ". "
+        candidate = " ".join(current_chunk + [sentence])
 
         if len(candidate) <= chunk_size:
-            current_chunk = candidate
+            current_chunk.append(sentence)
         else:
-            chunks.append(current_chunk.strip())
-            current_chunk = sentence + ". "
+            if current_chunk:
+                chunks.append(" ".join(current_chunk))
+
+            overlap = current_chunk[-overlap_sentences:] if overlap_sentences > 0 else []
+            current_chunk = overlap + [sentence]
 
     if current_chunk:
-        chunks.append(current_chunk.strip())
+        chunks.append(" ".join(current_chunk))
 
     return chunks
