@@ -6,6 +6,8 @@ import json
 load_dotenv()
 client = OpenAI()
 
+TOP_K = 3
+
 EMBEDDINGS_FILE = "data/embeddings.json"
 
 with open(EMBEDDINGS_FILE, "r") as file:
@@ -33,7 +35,12 @@ scored_chunks.sort(
     reverse=True
 )
 
-top_chunks = scored_chunks[:3]
+print("\nAll retrieval scores:\n")
+
+for chunk in scored_chunks:
+    print(f"{chunk['score']:.4f} -> {chunk['text'][:80]}")
+
+top_chunks = scored_chunks[:TOP_K]
 
 print("\nTop retrieved chunks:\n")
 
