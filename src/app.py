@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from src.rag_service import answer_question
-from src.models import QuestionRequest
+from src.models import QuestionRequest, QuestionResponse
 
 app = FastAPI()
 
@@ -11,7 +11,7 @@ def root():
         "service": "AI Knowledge Assistant API"
     }
 
-@app.post("/ask")
+@app.post("/ask", response_model=QuestionResponse)
 def ask_question(payload: QuestionRequest):
 
     question = payload.question
