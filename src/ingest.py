@@ -1,5 +1,5 @@
-from ai_utils import get_embedding
-from text_processing import chunk_text
+from src.ai_utils import get_embedding
+from src.text_processing import chunk_text
 from pathlib import Path
 import json
 
