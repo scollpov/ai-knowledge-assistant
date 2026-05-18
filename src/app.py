@@ -5,14 +5,14 @@ from src.models import QuestionRequest, QuestionResponse
 app = FastAPI()
 
 @app.get("/")
-def root():
+async def root():
     return {
         "status": "ok",
         "service": "AI Knowledge Assistant API"
     }
 
 @app.post("/ask", response_model=QuestionResponse)
-def ask_question(payload: QuestionRequest):
+async def ask_question(payload: QuestionRequest):
 
     question = payload.question
 
