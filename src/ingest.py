@@ -1,19 +1,8 @@
-from openai import OpenAI
-from dotenv import load_dotenv
+from ai_utils import get_embedding
 import json
-
-load_dotenv()
-client = OpenAI()
 
 KNOWLEDGE_FILE = "data/knowledge.txt"
 EMBEDDINGS_FILE = "data/embeddings.json"
-
-def get_embedding(text):
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text
-    )
-    return response.data[0].embedding
 
 with open(KNOWLEDGE_FILE, "r") as file:
     text = file.read()

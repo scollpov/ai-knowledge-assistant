@@ -1,24 +1,12 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-import numpy as np
+from ai_utils import get_embedding, cosine_similarity
 import json
 
 load_dotenv()
 client = OpenAI()
 
 EMBEDDINGS_FILE = "data/embeddings.json"
-
-def get_embedding(text):
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text
-    )
-    return response.data[0].embedding
-
-def cosine_similarity(a, b):
-    a = np.array(a)
-    b = np.array(b)
-    return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
 with open(EMBEDDINGS_FILE, "r") as file:
     stored_data = json.load(file)
