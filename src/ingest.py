@@ -24,6 +24,8 @@ for chunk in knowledge_chunks:
     embedding = get_embedding(chunk)
 
     stored_data.append({
+        "id": len(stored_data) + 1,
+        "source": KNOWLEDGE_FILE,
         "text": chunk,
         "embedding": embedding
     })

@@ -27,6 +27,8 @@ for item in stored_data:
     )
 
     scored_chunks.append({
+        "id": item["id"],
+        "source": item["source"],
         "text": item["text"],
         "score": score
     })
@@ -55,6 +57,8 @@ context = ""
 for i, chunk in enumerate(top_chunks):
     print(f"Rank {i+1}")
     print(f"Score: {chunk['score']:.4f}")
+    print(f"Source ID: {chunk['id']}")
+    print(f"Source File: {chunk['source']}")
     print(chunk["text"])
     print()
 
