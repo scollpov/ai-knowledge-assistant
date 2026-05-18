@@ -2,7 +2,11 @@ from fastapi import FastAPI, HTTPException
 from src.rag_service import answer_question
 from src.models import QuestionRequest, QuestionResponse
 
-app = FastAPI()
+app = FastAPI(
+    title="AI Knowledge Assistant API",
+    description="A Retrieval-Augmented Generation API using embeddings, semantic search, and OpenAI.",
+    version="0.1.0"
+)
 
 @app.get("/")
 async def root():
