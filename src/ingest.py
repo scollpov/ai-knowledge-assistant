@@ -1,4 +1,5 @@
 from ai_utils import get_embedding
+from text_processing import chunk_text
 import json
 
 KNOWLEDGE_FILE = "data/knowledge.txt"
@@ -7,11 +8,14 @@ EMBEDDINGS_FILE = "data/embeddings.json"
 with open(KNOWLEDGE_FILE, "r") as file:
     text = file.read()
 
-knowledge_chunks = [
-    chunk.strip()
-    for chunk in text.split("\n\n")
-    if chunk.strip()
-]
+knowledge_chunks = chunk_text(text)
+
+print("\nGenerated chunks:\n")
+
+for i, chunk in enumerate(knowledge_chunks):
+    print(f"Chunk {i+1}:")
+    print(chunk)
+    print()
 
 stored_data = []
 
