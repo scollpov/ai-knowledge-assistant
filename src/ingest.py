@@ -8,7 +8,7 @@ EMBEDDINGS_FILE = "data/embeddings.json"
 with open(KNOWLEDGE_FILE, "r") as file:
     text = file.read()
 
-knowledge_chunks = chunk_text(text)
+knowledge_chunks = chunk_text(text=text, chunk_size=120)
 
 print("\nGenerated chunks:\n")
 
