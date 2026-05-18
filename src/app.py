@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from src.rag_service import answer_question
 from src.models import QuestionRequest, QuestionResponse
 
@@ -13,7 +13,15 @@ async def root():
 
 @app.post("/ask", response_model=QuestionResponse)
 async def ask_question(payload: QuestionRequest):
-
-    question = payload.question
-
-    return answer_question(question)
+    try:
+        return answer_question(payload.question)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=500,
+            detail="Embeddings file not found. Run ingestion first."
+        )
+    except Exception as error:
+        raise HTTPException(
+            status_code=500,
+            detail=str(error)
+        )
