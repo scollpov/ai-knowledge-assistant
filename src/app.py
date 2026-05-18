@@ -4,6 +4,13 @@ from src.models import QuestionRequest
 
 app = FastAPI()
 
+@app.get("/")
+def root():
+    return {
+        "status": "ok",
+        "service": "AI Knowledge Assistant API"
+    }
+
 @app.post("/ask")
 def ask_question(payload: QuestionRequest):
 
