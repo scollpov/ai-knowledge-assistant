@@ -9,7 +9,7 @@ client = OpenAI()
 EMBEDDINGS_FILE = "data/embeddings.json"
 
 TOP_K = 3
-MIN_SIMILARITY_SCORE = 0.35
+MIN_SIMILARITY_SCORE = 0.25
 
 with open(EMBEDDINGS_FILE, "r") as file:
     stored_data = json.load(file)
