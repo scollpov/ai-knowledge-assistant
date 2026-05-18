@@ -13,6 +13,13 @@ async def root():
 
 @app.post("/ask", response_model=QuestionResponse)
 async def ask_question(payload: QuestionRequest):
+
+    if not payload.question.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Question cannot be empty."
+        )
+
     try:
         return answer_question(payload.question)
     except FileNotFoundError:
