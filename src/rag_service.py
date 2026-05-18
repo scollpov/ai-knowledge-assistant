@@ -1,15 +1,17 @@
 from openai import OpenAI
 from dotenv import load_dotenv
 from src.ai_utils import get_embedding, cosine_similarity
+from src.config import (
+    TOP_K,
+    MIN_SIMILARITY_SCORE,
+    EMBEDDINGS_FILE,
+    CHAT_MODEL
+)
+
 import json
 
 load_dotenv()
 client = OpenAI()
-
-EMBEDDINGS_FILE = "data/embeddings.json"
-TOP_K = 3
-MIN_SIMILARITY_SCORE = 0.25
-
 
 def answer_question(question: str) -> dict:
     with open(EMBEDDINGS_FILE, "r") as file:
@@ -45,7 +47,7 @@ def answer_question(question: str) -> dict:
         context += chunk["text"] + "\n\n"
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model=CHAT_MODEL,
         messages=[
             {
                 "role": "system",
