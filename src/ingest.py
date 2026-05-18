@@ -5,13 +5,7 @@ import json
 load_dotenv()
 client = OpenAI()
 
-knowledge_chunks = [
-    "Python is widely used in AI engineering and backend systems.",
-    "FastAPI is a lightweight Python framework for building APIs.",
-    "RAG reduces hallucinations by retrieving relevant context before generation.",
-    "Docker containers help developers deploy applications consistently."
-]
-
+KNOWLEDGE_FILE = "data/knowledge.txt"
 EMBEDDINGS_FILE = "data/embeddings.json"
 
 def get_embedding(text):
@@ -20,6 +14,15 @@ def get_embedding(text):
         input=text
     )
     return response.data[0].embedding
+
+with open(KNOWLEDGE_FILE, "r") as file:
+    text = file.read()
+
+knowledge_chunks = [
+    chunk.strip()
+    for chunk in text.split("\n\n")
+    if chunk.strip()
+]
 
 stored_data = []
 
