@@ -1,0 +1,5 @@
+Embeddings convert text into numerical vectors that capture semantic meaning.
+
+Retrieval-Augmented Generation, also known as RAG, reduces hallucinations by retrieving relevant external context before generating an answer.
+
+Vector databases store embeddings and allow applications to search by semantic similarity.

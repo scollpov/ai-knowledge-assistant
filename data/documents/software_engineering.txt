@@ -1,0 +1,5 @@
+FastAPI is a modern Python framework for building APIs.
+
+Docker helps package applications into portable containers.
+
+GitHub is used to host repositories, manage code versions, and collaborate with other developers.

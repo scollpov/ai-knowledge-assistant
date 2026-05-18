@@ -1,34 +1,32 @@
 from ai_utils import get_embedding
 from text_processing import chunk_text
+from pathlib import Path
 import json
 
-KNOWLEDGE_FILE = "data/knowledge.txt"
+DOCUMENTS_DIR = Path("data/documents")
 EMBEDDINGS_FILE = "data/embeddings.json"
-
-with open(KNOWLEDGE_FILE, "r") as file:
-    text = file.read()
-
-knowledge_chunks = chunk_text(text=text, chunk_size=120)
-
-print("\nGenerated chunks:\n")
-
-for i, chunk in enumerate(knowledge_chunks):
-    print(f"Chunk {i+1}:")
-    print(chunk)
-    print()
 
 stored_data = []
 
-for chunk in knowledge_chunks:
-    print(f"Embedding: {chunk}")
-    embedding = get_embedding(chunk)
+for document_path in DOCUMENTS_DIR.glob("*.txt"):
+    print(f"\nProcessing document: {document_path}")
 
-    stored_data.append({
-        "id": len(stored_data) + 1,
-        "source": KNOWLEDGE_FILE,
-        "text": chunk,
-        "embedding": embedding
-    })
+    with open(document_path, "r") as file:
+        text = file.read()
+
+    chunks = chunk_text(text, chunk_size=300)
+
+    for chunk in chunks:
+        print(f"Embedding chunk: {chunk[:80]}...")
+
+        embedding = get_embedding(chunk)
+
+        stored_data.append({
+            "id": len(stored_data) + 1,
+            "source": str(document_path),
+            "text": chunk,
+            "embedding": embedding
+        })
 
 with open(EMBEDDINGS_FILE, "w") as file:
     json.dump(stored_data, file)
