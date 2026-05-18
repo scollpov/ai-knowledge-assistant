@@ -6,9 +6,10 @@ import json
 load_dotenv()
 client = OpenAI()
 
-TOP_K = 3
-
 EMBEDDINGS_FILE = "data/embeddings.json"
+
+TOP_K = 3
+MIN_SIMILARITY_SCORE = 0.35
 
 with open(EMBEDDINGS_FILE, "r") as file:
     stored_data = json.load(file)
@@ -41,6 +42,11 @@ for chunk in scored_chunks:
     print(f"{chunk['score']:.4f} -> {chunk['text'][:80]}")
 
 top_chunks = scored_chunks[:TOP_K]
+
+if not top_chunks or top_chunks[0]["score"] < MIN_SIMILARITY_SCORE:
+    print("\nNo sufficiently relevant context found.")
+    print("Try improving the knowledge base or asking a more specific question.")
+    exit()
 
 print("\nTop retrieved chunks:\n")
 
