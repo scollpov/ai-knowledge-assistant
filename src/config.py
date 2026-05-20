@@ -1,6 +1,6 @@
 TOP_K = 3
 
-MAX_DISTANCE = 1.2
+MAX_DISTANCE = 1.6
 
 EMBEDDINGS_FILE = "data/embeddings.json"
 

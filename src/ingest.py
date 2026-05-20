@@ -36,7 +36,8 @@ for document_path in DOCUMENTS_DIR.glob("*.txt"):
             documents=[chunk],
             embeddings=[embedding],
             metadatas=[{
-                "source": str(document_path)
+                "source": str(document_path),
+                "document_name": document_path.stem
             }]	
         )
 

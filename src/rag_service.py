@@ -1,5 +1,6 @@
 from openai import OpenAI
 from dotenv import load_dotenv
+from typing import Optional
 
 from src.ai_utils import get_embedding
 from src.vector_store import collection
@@ -13,13 +14,17 @@ load_dotenv()
 
 client = OpenAI()
 
-def answer_question(question: str) -> dict:
+def answer_question(
+    question: str,
+    filter_metadata: Optional[dict] = None
+) -> dict:
 
     question_embedding = get_embedding(question)
 
     results = collection.query(
         query_embeddings=[question_embedding],
-        n_results=TOP_K
+        n_results=TOP_K,
+        where=filter_metadata if filter_metadata else None
     )
 
     documents = results["documents"][0]
