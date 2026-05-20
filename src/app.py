@@ -36,7 +36,10 @@ async def ask_question(payload: QuestionRequest):
         )
 
     try:
-        return answer_question(payload.question)
+        return answer_question(
+            payload.question,
+            filter_metadata=payload.filter_metadata
+        )
     except FileNotFoundError:
         raise HTTPException(
             status_code=500,
