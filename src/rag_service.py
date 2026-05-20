@@ -1,50 +1,65 @@
 from openai import OpenAI
 from dotenv import load_dotenv
-from src.ai_utils import get_embedding, cosine_similarity
+
+from src.ai_utils import get_embedding
+from src.vector_store import collection
 from src.config import (
     TOP_K,
-    MIN_SIMILARITY_SCORE,
-    EMBEDDINGS_FILE,
+    MAX_DISTANCE,
     CHAT_MODEL
 )
 
-import json
-
 load_dotenv()
+
 client = OpenAI()
 
 def answer_question(question: str) -> dict:
-    with open(EMBEDDINGS_FILE, "r") as file:
-        stored_data = json.load(file)
 
     question_embedding = get_embedding(question)
 
-    scored_chunks = []
+    results = collection.query(
+        query_embeddings=[question_embedding],
+        n_results=TOP_K
+    )
 
-    for item in stored_data:
-        score = cosine_similarity(question_embedding, item["embedding"])
+    documents = results["documents"][0]
+    metadatas = results["metadatas"][0]
+    distances = results["distances"][0]
+    ids = results["ids"][0]
 
-        scored_chunks.append({
-            "id": item["id"],
-            "source": item["source"],
-            "text": item["text"],
-            "score": score
-        })
-
-    scored_chunks.sort(key=lambda x: x["score"], reverse=True)
-
-    top_chunks = scored_chunks[:TOP_K]
-
-    if not top_chunks or top_chunks[0]["score"] < MIN_SIMILARITY_SCORE:
+    if not documents:
         return {
             "answer": "No relevant context found.",
             "sources": []
         }
 
+    sources = []
+
     context = ""
 
-    for chunk in top_chunks:
-        context += chunk["text"] + "\n\n"
+    for doc, metadata, distance, doc_id in zip(
+        documents,
+        metadatas,
+        distances,
+        ids
+    ):
+
+        score = distance
+	
+        sources.append({
+            "id": int(doc_id),
+            "source": metadata["source"],
+            "text": doc,
+            "score": score
+        })
+
+        context += doc + "\n\n"
+
+    if sources[0]["score"] > MAX_DISTANCE:
+        return {
+            "answer": "No relevant context found.",
+            "sources": []
+        }
 
     response = client.chat.completions.create(
         model=CHAT_MODEL,
@@ -62,5 +77,5 @@ def answer_question(question: str) -> dict:
 
     return {
         "answer": response.choices[0].message.content,
-        "sources": top_chunks
+        "sources": sources
     }

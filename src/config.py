@@ -1,6 +1,6 @@
 TOP_K = 3
 
-MIN_SIMILARITY_SCORE = 0.25
+MAX_DISTANCE = 1.2
 
 EMBEDDINGS_FILE = "data/embeddings.json"
 
