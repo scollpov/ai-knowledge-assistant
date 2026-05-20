@@ -3,6 +3,7 @@ from pathlib import Path
 from src.ai_utils import get_embedding
 from src.text_processing import chunk_text
 from src.vector_store import collection
+from src.document_loader import load_document
 
 DOCUMENTS_DIR = Path("data/documents")
 
@@ -13,12 +14,14 @@ if existing["ids"]:
 
 chunk_id = 1
 
-for document_path in DOCUMENTS_DIR.glob("*.txt"):
+for document_path in DOCUMENTS_DIR.iterdir():
 
     print(f"\nProcessing document: {document_path}")
 
-    with open(document_path, "r") as file:
-        text = file.read()
+    if not document_path.is_file():
+        continue
+
+    text = load_document(document_path)
 
     chunks = chunk_text(
         text, 
