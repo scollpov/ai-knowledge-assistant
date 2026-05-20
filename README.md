@@ -6,6 +6,9 @@ A Retrieval-Augmented Generation (RAG) backend service built with FastAPI, OpenA
 
 ## Features
 
+- ChromaDB vector database
+- Persistent vector storage
+- Metadata-based retrieval filtering
 - OpenAI embeddings
 - Semantic similarity retrieval
 - Multi-document ingestion
@@ -130,11 +133,14 @@ http://127.0.0.1:8000/docs
 
 ---
 
-## Example API Request
+## Example API Request With Metadata Filter
 
 ```json
 {
-  "question": "How do AI systems reduce hallucinations?"
+  "question": "What helps package applications?",
+  "filter_metadata": {
+    "document_name": "software_engineering"
+  }
 }
 ```
 
