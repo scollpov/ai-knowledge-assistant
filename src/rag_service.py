@@ -11,6 +11,10 @@ from src.config import (
     MAX_DISTANCE,
     CHAT_MODEL
 )
+from src.conversation_memory import (
+    add_message,
+    get_history
+)
 
 load_dotenv()
 
@@ -78,21 +82,32 @@ def answer_question(
     for source in sources:
         context += source["text"] + "\n\n"
 
+    messages = [
+        {
+            "role": "system",
+            "content": f"Answer ONLY using this context:\n\n{context}"
+        }
+    ]
+
+    messages.extend(get_history())
+
+    messages.append({
+        "role": "user",
+        "content": question
+    })
+
     response = client.chat.completions.create(
         model=CHAT_MODEL,
-        messages=[
-            {
-                "role": "system",
-                "content": f"Answer ONLY using this context:\n\n{context}"
-            },
-            {
-                "role": "user",
-                "content": question
-            }
-        ]
+        temperature=0,
+        messages=messages
     )
 
+    answer = response.choices[0].message.content
+
+    add_message("user", question)
+    add_message("assistant", answer)
+
     return {
-        "answer": response.choices[0].message.content,
+        "answer": answer,
         "sources": sources
     }
