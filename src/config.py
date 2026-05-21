@@ -1,4 +1,6 @@
-TOP_K = 3
+RETRIEVAL_K = 10
+
+FINAL_K = 3
 
 MAX_DISTANCE = 1.6
 

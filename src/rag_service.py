@@ -4,8 +4,10 @@ from typing import Optional
 
 from src.ai_utils import get_embedding
 from src.vector_store import collection
+from src.reranker import keyword_overlap_score
 from src.config import (
-    TOP_K,
+    RETRIEVAL_K,
+    FINAL_K,
     MAX_DISTANCE,
     CHAT_MODEL
 )
@@ -23,7 +25,7 @@ def answer_question(
 
     results = collection.query(
         query_embeddings=[question_embedding],
-        n_results=TOP_K,
+        n_results=RETRIEVAL_K,
         where=filter_metadata if filter_metadata else None
     )
 
@@ -50,21 +52,31 @@ def answer_question(
     ):
 
         score = distance
-	
+        rerank_score = keyword_overlap_score(question,doc)
+
         sources.append({
-            "id": int(doc_id),
+            "id": doc_id,
             "source": metadata["source"],
             "text": doc,
-            "score": score
+            "score": score,
+            "rerank_score": rerank_score
         })
 
-        context += doc + "\n\n"
+    sources.sort(
+        key=lambda x: x["rerank_score"],
+        reverse=True
+    )
 
     if sources[0]["score"] > MAX_DISTANCE:
         return {
             "answer": "No relevant context found.",
             "sources": []
         }
+
+    sources = sources[:FINAL_K]
+
+    for source in sources:
+        context += source["text"] + "\n\n"
 
     response = client.chat.completions.create(
         model=CHAT_MODEL,
