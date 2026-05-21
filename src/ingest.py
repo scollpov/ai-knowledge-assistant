@@ -57,4 +57,19 @@ for document_path in DOCUMENTS_DIR.iterdir():
             }]	
         )
 
+current_sources = {
+    str(path)
+    for path in DOCUMENTS_DIR.iterdir()
+    if path.is_file()
+}
+
+existing = collection.get()
+
+for metadata, chunk_id in zip(existing["metadatas"], existing["ids"]):
+    source = metadata["source"]
+
+    if source not in current_sources:
+        print(f"Removing stale chunk from deleted document: {source}")
+        collection.delete(ids=[chunk_id])
+
 print("\nIngestion complete.")
