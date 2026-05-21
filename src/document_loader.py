@@ -1,6 +1,6 @@
 from pathlib import Path
 from pypdf import PdfReader
-
+from src.text_cleaner import clean_text
 
 def load_text_document(file_path: Path) -> str:
 
@@ -23,9 +23,9 @@ def load_pdf_document(file_path: Path) -> str:
 def load_document(file_path: Path) -> str:
 
     if file_path.suffix == ".txt":
-        return load_text_document(file_path)
+        return clean_text(load_text_document(file_path))
 
     if file_path.suffix == ".pdf":
-        return load_pdf_document(file_path)
+        return clean_text(load_pdf_document(file_path))
 
     raise ValueError(f"Unsupported file type: {file_path}")

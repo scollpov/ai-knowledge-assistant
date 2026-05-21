@@ -4,15 +4,9 @@ from src.ai_utils import get_embedding
 from src.text_processing import chunk_text
 from src.vector_store import collection
 from src.document_loader import load_document
+from src.hash_utils import generate_content_hash
 
 DOCUMENTS_DIR = Path("data/documents")
-
-existing = collection.get()
-
-if existing["ids"]:
-    collection.delete(ids=existing["ids"])
-
-chunk_id = 1
 
 for document_path in DOCUMENTS_DIR.iterdir():
 
@@ -23,27 +17,44 @@ for document_path in DOCUMENTS_DIR.iterdir():
 
     text = load_document(document_path)
 
+    document_hash = generate_content_hash(text)
+
+    existing_by_source = collection.get(
+        where={
+            "source": str(document_path)
+        }
+    )
+
+    if existing_by_source["ids"]:
+        existing_metadata = existing_by_source["metadatas"][0]        
+
+        if existing_metadata["document_hash"] == document_hash:
+            print(f"Skipping unchanged document: {document_path}")
+            continue
+
+        print(f"Updating changed document: {document_path}")
+        collection.delete(ids=existing_by_source["ids"])
+
     chunks = chunk_text(
         text, 
         chunk_size=300,
         overlap_sentences=1)
 
-    for chunk in chunks:
+    for index, chunk in enumerate(chunks):
         
         print(f"Embedding chunk: {chunk[:80]}...")
 
         embedding = get_embedding(chunk)
 
         collection.add(
-            ids=[str(chunk_id)],
+            ids=[f"{document_path}-{index}"],
             documents=[chunk],
             embeddings=[embedding],
             metadatas=[{
                 "source": str(document_path),
-                "document_name": document_path.stem
+                "document_name": document_path.stem,
+                "document_hash": document_hash
             }]	
         )
-
-        chunk_id += 1
 
 print("\nIngestion complete.")
