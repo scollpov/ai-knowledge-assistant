@@ -1,9 +1,0 @@
-Python is a popular programming language used for backend development, data science, and AI engineering.
-
-FastAPI is a modern Python framework for building APIs quickly and efficiently.
-
-Embeddings convert text into numerical vectors that capture semantic meaning.
-
-Retrieval-Augmented Generation (RAG) combines document retrieval with language models to reduce hallucinations.
-
-Docker allows developers to package applications into portable containers.

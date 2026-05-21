@@ -40,7 +40,7 @@ src/
 
 data/
     documents/
-    embeddings.json
+    chroma
 
 experiments/
 ```
@@ -83,7 +83,14 @@ OPENAI_API_KEY=your_api_key
 
 ## Ingest Documents
 
-Place `.txt` documents inside:
+The ingestion pipeline supports incremental updates:
+
+- unchanged documents are skipped
+- changed documents are re-embedded
+- document hashes are stored as metadata
+- ChromaDB is used for persistent vector storage
+
+Place `.txt` or `.pdf` documents inside:
 
 ```txt
 data/documents/
