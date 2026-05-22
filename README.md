@@ -1,6 +1,6 @@
 # AI Knowledge Assistant
 
-A Retrieval-Augmented Generation (RAG) backend service built with FastAPI, OpenAI embeddings, and semantic search.
+A conversational Retrieval-Augmented Generation (RAG) backend service built with FastAPI, OpenAI embeddings, ChromaDB, and semantic search.
 
 ---
 
@@ -12,16 +12,24 @@ A Retrieval-Augmented Generation (RAG) backend service built with FastAPI, OpenA
 - OpenAI embeddings
 - Semantic similarity retrieval
 - Multi-document ingestion
+- PDF document ingestion
 - Sentence-aware chunking
 - Chunk overlap strategy
 - Top-k retrieval
 - Retrieval confidence thresholds
 - Source attribution
+- Query rewriting for conversational retrieval
+- Conversational memory
+- Long-term fact memory
+- Summarized conversation history
+- Reranking pipeline
+- Incremental document indexing
 - FastAPI backend
 - Swagger/OpenAPI documentation
 - Typed request/response validation
 - Async API endpoints
 - Error handling and validation
+- Dockerized deployment support
 
 ---
 
@@ -37,10 +45,16 @@ src/
     models.py
     ingest.py
     query.py
+    reranker.py
+    conversation_memory.py
+    conversation_summary.py
+    long_term_memory.py
+    memory_extractor.py
+    query_rewriter.py
 
 data/
     documents/
-    chroma
+    chroma/
 
 experiments/
 ```
@@ -52,9 +66,11 @@ experiments/
 - Python
 - FastAPI
 - OpenAI API
+- ChromaDB
 - NumPy
 - Pydantic
 - Uvicorn
+- Docker
 
 ---
 
@@ -68,6 +84,35 @@ The assistant includes multiple memory layers:
 - Retrieval memory: document chunks stored in ChromaDB
 
 This allows the assistant to support follow-up questions, remember important user facts during a session, and combine conversational context with document retrieval.
+
+---
+
+## Conversational Retrieval Architecture
+
+The assistant supports conversational RAG workflows through:
+
+- Query rewriting for standalone semantic retrieval
+- Conversational memory integration
+- Long-term fact extraction
+- Retrieval reranking
+- Context summarization
+- Retrieval fallback to conversational answering
+
+Pipeline overview:
+
+```txt
+User Question
+    ↓
+Query Rewriting
+    ↓
+Embedding Generation
+    ↓
+Vector Retrieval
+    ↓
+Reranking
+    ↓
+LLM Generation
+```
 
 ---
 
@@ -101,6 +146,7 @@ The ingestion pipeline supports incremental updates:
 - unchanged documents are skipped
 - changed documents are re-embedded
 - document hashes are stored as metadata
+- stale chunks are automatically removed
 - ChromaDB is used for persistent vector storage
 
 Place `.txt` or `.pdf` documents inside:
@@ -115,10 +161,10 @@ Run ingestion:
 python -m src.ingest
 ```
 
-This generates:
+Persistent vector data is stored in:
 
 ```txt
-data/embeddings.json
+data/chroma/
 ```
 
 ---
@@ -133,6 +179,18 @@ Example question:
 
 ```txt
 How do AI systems reduce hallucinations?
+```
+
+Clear conversation memory:
+
+```txt
+clear
+```
+
+Exit:
+
+```txt
+exit
 ```
 
 ---
@@ -150,6 +208,24 @@ Open interactive API documentation:
 ```txt
 http://127.0.0.1:8000/docs
 ```
+
+---
+
+## Docker Deployment
+
+Build Docker image:
+
+```bash
+docker build -t ai-knowledge-assistant .
+```
+
+Run container:
+
+```bash
+docker run -p 8000:8000 --env-file .env ai-knowledge-assistant
+```
+
+The container automatically supports cloud deployment platforms using the `PORT` environment variable.
 
 ---
 
@@ -180,3 +256,16 @@ http://127.0.0.1:8000/docs
   ]
 }
 ```
+
+---
+
+## Future Improvements
+
+- Cloud deployment
+- Persistent database-backed memory
+- Multi-user memory isolation
+- Streaming responses
+- Agent/tool routing
+- Hybrid search
+- Evaluation dashboards
+- Authentication and authorization
