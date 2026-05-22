@@ -6,6 +6,7 @@ from src.ai_utils import get_embedding
 from src.vector_store import collection
 from src.reranker import keyword_overlap_score
 from src.query_rewriter import rewrite_query
+from src.conversation_summary import get_summary
 from src.config import (
     RETRIEVAL_K,
     FINAL_K,
@@ -97,6 +98,7 @@ def answer_question(
             {
                 "role": "system",
                 "content":
+                    f"Conversation summary:\n{get_summary()}\n\n"
                     f"Known user facts:\n{get_facts()}\n\n"  
                     "Answer using the conversation history."
             }
@@ -134,6 +136,7 @@ def answer_question(
         {
             "role": "system",
             "content":
+                f"Conversation summary:\n{get_summary()}\n\n"
                 f"Known user facts:\n{get_facts()}\n\n" 
                 f"Answer ONLY using this context:\n\n{context}"
         }
