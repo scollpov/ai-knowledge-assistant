@@ -1,3 +1,5 @@
+from src.config import (MAX_HISTORY_MESSAGES)
+
 conversation_history = []
 
 def add_message(role: str, content: str):
@@ -9,7 +11,7 @@ def add_message(role: str, content: str):
 
 def get_history():
 
-    return conversation_history
+    return conversation_history[-MAX_HISTORY_MESSAGES:]
 
 def clear_history():
 

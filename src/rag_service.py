@@ -5,6 +5,7 @@ from typing import Optional
 from src.ai_utils import get_embedding
 from src.vector_store import collection
 from src.reranker import keyword_overlap_score
+from src.query_rewriter import rewrite_query
 from src.config import (
     RETRIEVAL_K,
     FINAL_K,
@@ -14,6 +15,11 @@ from src.config import (
 from src.conversation_memory import (
     add_message,
     get_history
+)
+from src.memory_extractor import extract_fact
+from src.long_term_memory import (
+    add_fact,
+    get_facts
 )
 
 load_dotenv()
@@ -25,7 +31,22 @@ def answer_question(
     filter_metadata: Optional[dict] = None
 ) -> dict:
 
-    question_embedding = get_embedding(question)
+    fact = extract_fact(question)
+
+    if fact:
+        print(f"\nRemembered fact: {fact}")
+        add_fact(fact)
+
+    rewritten_query = rewrite_query(
+        get_history(),
+        question
+    )
+
+    print(f"\nRewritten query: {rewritten_query}")
+
+    question_embedding = get_embedding(
+        rewritten_query
+    )
 
     results = collection.query(
         query_embeddings=[question_embedding],
@@ -72,8 +93,35 @@ def answer_question(
     )
 
     if sources[0]["score"] > MAX_DISTANCE:
+        messages = [
+            {
+                "role": "system",
+                "content":
+                    f"Known user facts:\n{get_facts()}\n\n"  
+                    "Answer using the conversation history."
+            }
+        ]
+
+        messages.extend(get_history())
+
+        messages.append({
+            "role": "user",
+            "content": question
+        })
+
+        response = client.chat.completions.create(
+            model=CHAT_MODEL,
+            temperature=0,
+            messages=messages
+        )
+
+        answer = response.choices[0].message.content
+
+        add_message("user", question)
+        add_message("assistant", answer)
+
         return {
-            "answer": "No relevant context found.",
+            "answer": answer,
             "sources": []
         }
 
@@ -85,7 +133,9 @@ def answer_question(
     messages = [
         {
             "role": "system",
-            "content": f"Answer ONLY using this context:\n\n{context}"
+            "content":
+                f"Known user facts:\n{get_facts()}\n\n" 
+                f"Answer ONLY using this context:\n\n{context}"
         }
     ]
 
