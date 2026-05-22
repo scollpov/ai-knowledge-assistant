@@ -1,3 +1,5 @@
+from pathlib import Path
+
 RETRIEVAL_K = 10
 
 FINAL_K = 3
@@ -11,3 +13,5 @@ CHAT_MODEL = "gpt-4o-mini"
 EMBEDDING_MODEL = "text-embedding-3-small"
 
 MAX_HISTORY_MESSAGES = 6
+
+MEMORY_FILE = Path("data/memory.json")

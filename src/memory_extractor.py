@@ -12,10 +12,11 @@ def extract_fact(message: str) -> Optional[str]:
             {
                 "role": "system",
                 "content": (
-                    "Determine whether the user message contains "
-                    "a long-term personal fact worth remembering. "
-                    "Examples: name, profession, preferences, goals. "
-                    "If yes, return ONLY the fact. "
+                    "Determine whether the user message contains a long-term personal fact worth remembering. "
+                    "Preserve the COMPLETE information exactly as provided. "
+                    "Do not shorten names or facts. "
+                    "If the user provides a full name, preserve the full name. "
+                    "If yes, return ONLY the extracted fact. "
                     "If no, return ONLY: NONE"
                 )
             },

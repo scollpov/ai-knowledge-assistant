@@ -1,10 +1,14 @@
 from typing import List, Dict
 from openai import OpenAI
 from src.config import CHAT_MODEL
+from src.memory_storage import load_memory, save_memory
 
 client = OpenAI()
 
-conversation_summary = ""
+memory = load_memory()
+
+conversation_summary = memory["summary"]
+
 
 def update_summary(history: List[Dict]) -> None:
 
@@ -44,11 +48,19 @@ def update_summary(history: List[Dict]) -> None:
 
     conversation_summary = response.choices[0].message.content
 
+    memory["summary"] = conversation_summary
+    save_memory(memory)
+
+
 def get_summary() -> str:
 
     return conversation_summary
+
 
 def clear_summary():
 
     global conversation_summary 
     conversation_summary = ""
+
+    memory["summary"] = ""
+    save_memory(memory)

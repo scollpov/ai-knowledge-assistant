@@ -1,5 +1,6 @@
 from src.rag_service import answer_question
 from src.conversation_memory import clear_history
+from src.long_term_memory import clear_facts
 
 while True:
     question = input("\nAsk a question: ")
@@ -12,6 +13,14 @@ while True:
         clear_history()
 
         print("Conversation history cleared.")
+
+        continue
+
+    if question.lower() == "clear facts":
+
+        clear_facts()
+
+        print("Long-term facts cleared.")
 
         continue
 
