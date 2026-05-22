@@ -58,6 +58,19 @@ experiments/
 
 ---
 
+## Memory Architecture
+
+The assistant includes multiple memory layers:
+
+- Short-term memory: recent conversation messages
+- Summarized memory: compressed older conversation history
+- Long-term memory: extracted user facts
+- Retrieval memory: document chunks stored in ChromaDB
+
+This allows the assistant to support follow-up questions, remember important user facts during a session, and combine conversational context with document retrieval.
+
+---
+
 ## Setup
 
 Create virtual environment:
