@@ -22,10 +22,13 @@ from src.long_term_memory import (
     add_fact,
     get_facts
 )
+from src.chat_service import generate_response
+from src.retrieval_router import should_retrieve
 
 load_dotenv()
 
 client = OpenAI()
+
 
 def answer_question(
     question: str,
@@ -37,6 +40,21 @@ def answer_question(
     if fact:
         print(f"\nRemembered fact: {fact}")
         add_fact(fact)
+
+    retrieve = should_retrieve(question)
+
+    print(f"\nShould retrieve: {retrieve}")
+
+    if not retrieve:
+        answer = generate_response(question)
+
+        add_message("user", question)
+        add_message("assistant", answer)
+
+        return {
+            "answer": answer,
+            "sources": []
+        }
 
     rewritten_query = rewrite_query(
         get_history(),
@@ -61,14 +79,17 @@ def answer_question(
     ids = results["ids"][0]
 
     if not documents:
+        answer = generate_response(question)
+
+        add_message("user", question)
+        add_message("assistant", answer)
+
         return {
-            "answer": "No relevant context found.",
+            "answer": answer,
             "sources": []
         }
 
     sources = []
-
-    context = ""
 
     for doc, metadata, distance, doc_id in zip(
         documents,
@@ -78,7 +99,11 @@ def answer_question(
     ):
 
         score = distance
-        rerank_score = keyword_overlap_score(question,doc)
+
+        rerank_score = keyword_overlap_score(
+            question,
+            doc
+        )
 
         sources.append({
             "id": doc_id,
@@ -94,30 +119,7 @@ def answer_question(
     )
 
     if sources[0]["score"] > MAX_DISTANCE:
-        messages = [
-            {
-                "role": "system",
-                "content":
-                    f"Conversation summary:\n{get_summary()}\n\n"
-                    f"Known user facts:\n{get_facts()}\n\n"  
-                    "Answer using the conversation history."
-            }
-        ]
-
-        messages.extend(get_history())
-
-        messages.append({
-            "role": "user",
-            "content": question
-        })
-
-        response = client.chat.completions.create(
-            model=CHAT_MODEL,
-            temperature=0,
-            messages=messages
-        )
-
-        answer = response.choices[0].message.content
+        answer = generate_response(question)
 
         add_message("user", question)
         add_message("assistant", answer)
@@ -129,33 +131,15 @@ def answer_question(
 
     sources = sources[:FINAL_K]
 
+    context = ""
+
     for source in sources:
         context += source["text"] + "\n\n"
 
-    messages = [
-        {
-            "role": "system",
-            "content":
-                f"Conversation summary:\n{get_summary()}\n\n"
-                f"Known user facts:\n{get_facts()}\n\n" 
-                f"Answer ONLY using this context:\n\n{context}"
-        }
-    ]
-
-    messages.extend(get_history())
-
-    messages.append({
-        "role": "user",
-        "content": question
-    })
-
-    response = client.chat.completions.create(
-        model=CHAT_MODEL,
-        temperature=0,
-        messages=messages
+    answer = generate_response(
+        question,
+        context
     )
-
-    answer = response.choices[0].message.content
 
     add_message("user", question)
     add_message("assistant", answer)
