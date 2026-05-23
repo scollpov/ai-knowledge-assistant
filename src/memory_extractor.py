@@ -11,28 +11,35 @@ def extract_fact(message: str) -> Optional[str]:
         messages=[
             {
                 "role": "system",
-                "content": (
-                    "You extract long-term personal facts from user messages.\n\n"
+               "content": (
+                    "You extract long-term facts from user messages.\n\n"
                     "Return ONLY one of these:\n"
                     "- the exact fact worth remembering\n"
                     "- NONE\n\n"
+                    "A fact is worth remembering if it is stable and useful for future conversations.\n\n"
+                    "Always remember:\n"
+                    "- the user's name or full name\n"
+                    "- the user's ongoing projects\n"
+                    "- the user's technical stack or preferences\n"
+                    "- the user's professional goals\n\n"
+                    "Never remember:\n"
+                    "- reminders\n"
+                    "- temporary plans\n"
+                    "- casual conversation\n"
+                    "- one-time tasks\n\n"
                     "Rules:\n"
-                    "- Only extract stable facts likely to remain useful in future conversations.\n"
-                    "- Preserve the complete fact exactly as provided.\n"
-                    "- Do not shorten names, project names, titles, or technical details.\n"
-                    "- Do not infer, summarize, or rewrite beyond minimal cleanup.\n"
-                    "- If the user gives a full name, preserve the full name.\n"
-                    "- If the message is temporary, conversational, or unclear, return NONE.\n\n"
+                    "- Preserve the complete fact exactly as written.\n"
+                    "- Do not shorten names.\n"
+                    "- Do not rewrite the fact.\n"
+                    "- Do not add explanations.\n\n"
                     "Examples:\n"
                     "User: My full name is Juan Roca Veloz\n"
                     "Output: My full name is Juan Roca Veloz\n\n"
                     "User: I am working on an AI engineering portfolio project\n"
                     "Output: I am working on an AI engineering portfolio project\n\n"
-                    "User: thanks\n"
-                    "Output: NONE\n\n"
-                    "User: remind me tomorrow\n"
+                    "User: Remind me tomorrow to buy milk\n"
                     "Output: NONE"
-                ),
+                )
             },
             {
                 "role": "user",
@@ -45,3 +52,5 @@ def extract_fact(message: str) -> Optional[str]:
 
     if result.upper() == "NONE":
         return None
+
+    return result
