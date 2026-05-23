@@ -6,3 +6,4 @@ __pycache__/
 data/embeddings.json
 *.pdf
 data/chroma/
+data/memory.json
