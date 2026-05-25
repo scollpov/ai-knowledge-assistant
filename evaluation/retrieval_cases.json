@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What is GPT-4?",
+    "expected_keywords": ["GPT-4", "multimodal",  "model"],
+    "required_matches": 2
+  },
+  {
+    "question": "What are embeddings?",
+    "expected_keywords": ["vector", "semantic"],
+    "required_matches": 2
+  },
+  {
+    "question": "What is RAG?",
+    "expected_keywords": ["retrieval", "generation", "embeddings"],
+    "required_matches": 2
+  },
+  {
+    "question": "What does ChromaDB do?",
+    "expected_keywords": ["vector", "similarity", "retrieval"],
+    "required_matches": 2
+  },
+  {
+    "question": "What does the uploaded GPT-4 report say about safety mitigations?",
+    "expected_keywords": ["mitigate", "safety", "harms"],
+    "required_matches": 2
+  }
+]

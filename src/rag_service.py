@@ -24,6 +24,7 @@ from src.long_term_memory import (
 )
 from src.chat_service import generate_response
 from src.retrieval_router import should_retrieve
+from src.retrieval_service import retrieve_sources
 
 load_dotenv()
 
@@ -63,22 +64,12 @@ def answer_question(
 
     print(f"\nRewritten query: {rewritten_query}")
 
-    question_embedding = get_embedding(
-        rewritten_query
+    results = retrieve_sources(
+        rewritten_query=rewritten_query, 
+        filter_metadata=filter_metadata
     )
 
-    results = collection.query(
-        query_embeddings=[question_embedding],
-        n_results=RETRIEVAL_K,
-        where=filter_metadata if filter_metadata else None
-    )
-
-    documents = results["documents"][0]
-    metadatas = results["metadatas"][0]
-    distances = results["distances"][0]
-    ids = results["ids"][0]
-
-    if not documents:
+    if not results:
         answer = generate_response(question)
 
         add_message("user", question)
@@ -89,47 +80,7 @@ def answer_question(
             "sources": []
         }
 
-    sources = []
-
-    for doc, metadata, distance, doc_id in zip(
-        documents,
-        metadatas,
-        distances,
-        ids
-    ):
-
-        score = distance
-
-        rerank_score = keyword_overlap_score(
-            question,
-            doc
-        )
-
-        sources.append({
-            "id": doc_id,
-            "source": metadata["source"],
-            "text": doc,
-            "score": score,
-            "rerank_score": rerank_score
-        })
-
-    sources.sort(
-        key=lambda x: x["rerank_score"],
-        reverse=True
-    )
-
-    if sources[0]["score"] > MAX_DISTANCE:
-        answer = generate_response(question)
-
-        add_message("user", question)
-        add_message("assistant", answer)
-
-        return {
-            "answer": answer,
-            "sources": []
-        }
-
-    sources = sources[:FINAL_K]
+    sources = results[:FINAL_K]
 
     context = ""
 
