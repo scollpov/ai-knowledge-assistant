@@ -36,13 +36,23 @@ def evaluate():
             if keyword.lower() in retrieved_text
         ]
 
-        required_matches = case.get("required_matches", 2)
-        passed = len(matched_keywords) >= required_matches
-
         print("\nQuestion:", question)
         print("Expected:", expected_keywords)
         print("Matched:", matched_keywords)
-        print("Result:", "PASS" if passed else "FAIL")
+        
+        required_matches = case.get("required_matches", 2)
+        should_retrieve = case.get("should_retrieve", True)
+
+        if not should_retrieve:
+            passed = len(results) == 0
+
+            print("Result (bad retrieval):", "PASS" if passed else "FAIL")
+        
+            continue
+
+        passed = len(matched_keywords) >= required_matches
+
+        print("Result:(good retrieval)", "PASS" if passed else "FAIL")
         
 if __name__ == "__main__":
     evaluate()

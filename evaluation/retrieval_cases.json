@@ -23,5 +23,17 @@
     "question": "What does the uploaded GPT-4 report say about safety mitigations?",
     "expected_keywords": ["mitigate", "safety", "harms"],
     "required_matches": 2
+  },
+  {
+    "question": "How do I cook pasta?",
+    "expected_keywords": [],
+    "required_matches": 0,
+    "should_retrieve": false
+  },
+  {
+    "question": "Who won the NBA finals in 2012?",
+    "expected_keywords": [],
+    "required_matches": 0,
+    "should_retrieve": false
   }
 ]
