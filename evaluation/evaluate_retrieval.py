@@ -17,6 +17,9 @@ def evaluate():
     total_cases = 0
     passed_cases = 0
 
+    false_positives = 0
+    false_negatives = 0
+
     report_cases = []
 
     cases = load_cases("evaluation/retrieval_cases.json")
@@ -57,7 +60,12 @@ def evaluate():
             (not should_retrieve and len(results) == 0)
         ) 
 
-        if passed: passed_cases += 1 
+        if passed: 
+            passed_cases += 1 
+
+        else:
+            false_positives += 1 if should_retrieve else 0
+            false_negatives += 0 if should_retrieve else 1
 
         print(
             "Result ", 
@@ -80,11 +88,15 @@ def evaluate():
     print("====================")
     print(f"Passed: {passed_cases}/{total_cases}")
     print(f"Accuracy: {accuracy:.2f}%")
+    print(f"False positives: {false_positives}")
+    print(f"False negatives: {false_negatives}")
 
     report = {
         "total_cases": total_cases,
         "passed_cases": passed_cases,
         "accuracy": accuracy,
+        "false_positives": false_positives,
+        "false_negatives": false_negatives,
         "cases": report_cases
     }
 
