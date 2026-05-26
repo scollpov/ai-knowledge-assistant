@@ -94,12 +94,17 @@ def evaluate():
             (not should_retrieve and len(results) == 0)
         ) 
 
+        status = "positive_" if should_retrieve else "negative_" 
+
         if passed: 
-            passed_cases += 1 
+            passed_cases += 1
+            status += "pass" 
 
         else:
             false_positives += 1 if should_retrieve else 0
             false_negatives += 0 if should_retrieve else 1
+
+            status += "negative"
 
         print(
             "Result ", 
@@ -116,6 +121,7 @@ def evaluate():
             "average_rerank_score": average_rerank_score,
             "source_ids": source_ids,
             "source_files": source_files,
+            "status": status,
             "passed": passed
         })
         
