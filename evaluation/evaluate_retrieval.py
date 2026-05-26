@@ -40,6 +40,16 @@ def evaluate():
             for result in results
         ).lower()
 
+        scores = [
+            result["score"]
+            for result in results
+        ]
+
+        average_score = (
+            sum(scores) / len(scores)
+            if scores else None
+        )
+
         matched_keywords = [
             keyword
             for keyword in expected_keywords
@@ -49,7 +59,8 @@ def evaluate():
         print("\nQuestion:", question)
         print("Expected:", expected_keywords)
         print("Matched:", matched_keywords)
-        
+        print("Average distance:", average_score)
+
         required_matches = case.get("required_matches", 2)
         should_retrieve = case.get("should_retrieve", True)
 
@@ -78,6 +89,7 @@ def evaluate():
             "expected_keywords": expected_keywords,
             "matched_keywords": matched_keywords,
             "should_retrieve": should_retrieve,
+            "average_score": average_score,
             "passed": passed
         })
         
