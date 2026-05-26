@@ -52,7 +52,7 @@ def evaluate():
 
         passed = len(matched_keywords) >= required_matches
 
-        print("Result:(retrieval)", "PASS" if passed else "FAIL")
+        print("Result:(positive retrieval)", "PASS" if passed else "FAIL")
         
 if __name__ == "__main__":
     evaluate()
