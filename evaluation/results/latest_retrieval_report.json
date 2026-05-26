@@ -1,0 +1,93 @@
+{
+  "total_cases": 7,
+  "passed_cases": 7,
+  "accuracy": 100.0,
+  "cases": [
+    {
+      "question": "What is GPT-4?",
+      "expected_keywords": [
+        "GPT-4",
+        "multimodal",
+        "model"
+      ],
+      "matched_keywords": [
+        "GPT-4",
+        "model"
+      ],
+      "should_retrieve": true,
+      "passed": true
+    },
+    {
+      "question": "What are embeddings?",
+      "expected_keywords": [
+        "vector",
+        "semantic"
+      ],
+      "matched_keywords": [
+        "vector",
+        "semantic"
+      ],
+      "should_retrieve": true,
+      "passed": true
+    },
+    {
+      "question": "What is RAG?",
+      "expected_keywords": [
+        "retrieval",
+        "generation",
+        "embeddings"
+      ],
+      "matched_keywords": [
+        "retrieval",
+        "generation",
+        "embeddings"
+      ],
+      "should_retrieve": true,
+      "passed": true
+    },
+    {
+      "question": "What does ChromaDB do?",
+      "expected_keywords": [
+        "vector",
+        "similarity",
+        "retrieval"
+      ],
+      "matched_keywords": [
+        "vector",
+        "similarity",
+        "retrieval"
+      ],
+      "should_retrieve": true,
+      "passed": true
+    },
+    {
+      "question": "What does the uploaded GPT-4 report say about safety mitigations?",
+      "expected_keywords": [
+        "mitigate",
+        "safety",
+        "harms"
+      ],
+      "matched_keywords": [
+        "mitigate",
+        "safety",
+        "harms"
+      ],
+      "should_retrieve": true,
+      "passed": true
+    },
+    {
+      "question": "How do I cook pasta?",
+      "expected_keywords": [],
+      "matched_keywords": [],
+      "should_retrieve": false,
+      "passed": true
+    },
+    {
+      "question": "Who won the NBA finals in 2012?",
+      "expected_keywords": [],
+      "matched_keywords": [],
+      "should_retrieve": false,
+      "passed": true
+    }
+  ]
+}

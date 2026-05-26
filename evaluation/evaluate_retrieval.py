@@ -1,3 +1,4 @@
+import os
 import json
 
 from src.vector_store import collection
@@ -15,6 +16,8 @@ def evaluate():
 
     total_cases = 0
     passed_cases = 0
+
+    report_cases = []
 
     cases = load_cases("evaluation/retrieval_cases.json")
 
@@ -61,6 +64,14 @@ def evaluate():
             "(positive retrieval):" if should_retrieve else "(negative retrieval):", 
             "PASS" if passed else "FAIL"
         )
+
+        report_cases.append({
+            "question": question,
+            "expected_keywords": expected_keywords,
+            "matched_keywords": matched_keywords,
+            "should_retrieve": should_retrieve,
+            "passed": passed
+        })
         
     accuracy = (passed_cases / total_cases) * 100 if total_cases else 0
 
@@ -69,6 +80,19 @@ def evaluate():
     print("====================")
     print(f"Passed: {passed_cases}/{total_cases}")
     print(f"Accuracy: {accuracy:.2f}%")
+
+    report = {
+        "total_cases": total_cases,
+        "passed_cases": passed_cases,
+        "accuracy": accuracy,
+        "cases": report_cases
+    }
+
+    os.makedirs("evaluation/results", exist_ok=True)
+
+    with open("evaluation/results/latest_retrieval_report.json", "w") as file:
+        json.dump(report, file, indent=2)
+
 
 if __name__ == "__main__":
     evaluate()
