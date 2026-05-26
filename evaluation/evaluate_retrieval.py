@@ -1,6 +1,8 @@
 import os
 import json
 
+from datetime import datetime
+
 from src.vector_store import collection
 from src.ai_utils import get_embedding
 from src.config import RETRIEVAL_K
@@ -136,6 +138,7 @@ def evaluate():
     print(f"False negatives: {false_negatives}")
 
     report = {
+        "generated_at": datetime.utcnow().isoformat(),
         "total_cases": total_cases,
         "passed_cases": passed_cases,
         "accuracy": accuracy,
