@@ -5,11 +5,18 @@ from datetime import datetime
 
 from src.vector_store import collection
 from src.ai_utils import get_embedding
-from src.config import RETRIEVAL_K
+from src.config import (
+    RETRIEVAL_K, 
+    REPORT_FILE
+)
 from src.retrieval_service import retrieve_sources
 
+def write_json_file(path:str, content: dict):
+    with open(path, "w") as file:
+        json.dump(content, file, indent=2)
 
-def load_cases(path: str):
+
+def load_json_file(path: str):
     with open(path, "r") as file:
         return json.load(file)
 
@@ -24,7 +31,13 @@ def evaluate():
 
     report_cases = []
 
-    cases = load_cases("evaluation/retrieval_cases.json")
+    previous_accuracy = (
+        load_json_file(REPORT_FILE)["accuracy"]
+        if os.path.exists(REPORT_FILE)
+        else None
+    )
+
+    cases = load_json_file("evaluation/retrieval_cases.json")
 
     for case in cases:
 
@@ -148,6 +161,11 @@ def evaluate():
     print(f"False positives: {false_positives}")
     print(f"False negatives: {false_negatives}")
 
+    if (previous_accuracy is not None 
+        and accuracy < previous_accuracy):
+
+        print("\nWARNING: Retrieval accuracy decreased")
+
     report = {
         "generated_at": datetime.utcnow().isoformat(),
         "total_cases": total_cases,
@@ -160,8 +178,7 @@ def evaluate():
 
     os.makedirs("evaluation/results", exist_ok=True)
 
-    with open("evaluation/results/latest_retrieval_report.json", "w") as file:
-        json.dump(report, file, indent=2)
+    write_json_file(REPORT_FILE, report)
 
 
 if __name__ == "__main__":

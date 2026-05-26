@@ -15,3 +15,5 @@ EMBEDDING_MODEL = "text-embedding-3-small"
 MAX_HISTORY_MESSAGES = 6
 
 MEMORY_FILE = Path("data/memory.json")
+
+REPORT_FILE = "evaluation/results/latest_retrieval_report.json"
