@@ -46,13 +46,13 @@ def evaluate():
         if not should_retrieve:
             passed = len(results) == 0
 
-            print("Result (bad retrieval):", "PASS" if passed else "FAIL")
+            print("Result (negative retrieval):", "PASS" if passed else "FAIL")
         
             continue
 
         passed = len(matched_keywords) >= required_matches
 
-        print("Result:(good retrieval)", "PASS" if passed else "FAIL")
+        print("Result:(retrieval)", "PASS" if passed else "FAIL")
         
 if __name__ == "__main__":
     evaluate()
