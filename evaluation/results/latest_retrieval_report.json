@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-05-26T10:06:15.085064",
+  "generated_at": "2026-05-26T10:15:59.375506",
   "total_cases": 7,
   "passed_cases": 7,
   "accuracy": 100.0,
@@ -31,6 +31,7 @@
         "data/documents/gpt4_report.pdf"
       ],
       "status": "positive_pass",
+      "failure_reason": null,
       "passed": true
     },
     {
@@ -57,6 +58,7 @@
         "data/documents/gpt4_report.pdf"
       ],
       "status": "positive_pass",
+      "failure_reason": null,
       "passed": true
     },
     {
@@ -72,7 +74,7 @@
         "embeddings"
       ],
       "should_retrieve": true,
-      "average_score": 1.0531940658887227,
+      "average_score": 1.0530569553375244,
       "average_rerank_score": 0.6666666666666666,
       "source_ids": [
         "2",
@@ -85,6 +87,7 @@
         "data/documents/gpt4_report.pdf"
       ],
       "status": "positive_pass",
+      "failure_reason": null,
       "passed": true
     },
     {
@@ -113,6 +116,7 @@
         "data/documents/ai_concepts.txt"
       ],
       "status": "positive_pass",
+      "failure_reason": null,
       "passed": true
     },
     {
@@ -128,7 +132,7 @@
         "harms"
       ],
       "should_retrieve": true,
-      "average_score": 0.5433485309282938,
+      "average_score": 0.5433782935142517,
       "average_rerank_score": 4.0,
       "source_ids": [
         "547",
@@ -141,6 +145,7 @@
         "data/documents/gpt4_report.pdf"
       ],
       "status": "positive_pass",
+      "failure_reason": null,
       "passed": true
     },
     {
@@ -153,6 +158,7 @@
       "source_ids": [],
       "source_files": [],
       "status": "negative_pass",
+      "failure_reason": null,
       "passed": true
     },
     {
@@ -165,6 +171,7 @@
       "source_ids": [],
       "source_files": [],
       "status": "negative_pass",
+      "failure_reason": null,
       "passed": true
     }
   ]

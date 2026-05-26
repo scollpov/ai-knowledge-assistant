@@ -97,6 +97,7 @@ def evaluate():
         ) 
 
         status = "positive_" if should_retrieve else "negative_" 
+        failure_reason = None
 
         if passed: 
             passed_cases += 1
@@ -107,6 +108,11 @@ def evaluate():
             false_negatives += 0 if should_retrieve else 1
 
             status += "negative"
+
+            failure_reason = (
+                "unexpected_retrieval" if not should_retrieve else 
+                ("no_sources" if not sources else "missing_keywords")
+            )
 
         print(
             "Result ", 
@@ -124,6 +130,7 @@ def evaluate():
             "source_ids": source_ids,
             "source_files": source_files,
             "status": status,
+            "failure_reason": failure_reason,
             "passed": passed
         })
         
