@@ -1,8 +1,8 @@
 {
   "total_cases": 7,
-  "passed_cases": 6,
-  "accuracy": 85.71428571428571,
-  "false_positives": 1,
+  "passed_cases": 7,
+  "accuracy": 100.0,
+  "false_positives": 0,
   "false_negatives": 0,
   "cases": [
     {
@@ -18,6 +18,7 @@
       ],
       "should_retrieve": true,
       "average_score": 0.5192749897638956,
+      "average_rerank_score": 2.0,
       "passed": true
     },
     {
@@ -32,6 +33,7 @@
       ],
       "should_retrieve": true,
       "average_score": 1.1731053193410237,
+      "average_rerank_score": 1.0,
       "passed": true
     },
     {
@@ -48,6 +50,7 @@
       ],
       "should_retrieve": true,
       "average_score": 1.0530569553375244,
+      "average_rerank_score": 0.6666666666666666,
       "passed": true
     },
     {
@@ -58,11 +61,14 @@
         "retrieval"
       ],
       "matched_keywords": [
-        "vector"
+        "vector",
+        "similarity",
+        "retrieval"
       ],
       "should_retrieve": true,
-      "average_score": 1.3730810483296711,
-      "passed": false
+      "average_score": 1.3941352367401123,
+      "average_rerank_score": 0.0,
+      "passed": true
     },
     {
       "question": "What does the uploaded GPT-4 report say about safety mitigations?",
@@ -77,7 +83,8 @@
         "harms"
       ],
       "should_retrieve": true,
-      "average_score": 0.5433485309282938,
+      "average_score": 0.5433782935142517,
+      "average_rerank_score": 4.0,
       "passed": true
     },
     {
@@ -86,6 +93,7 @@
       "matched_keywords": [],
       "should_retrieve": false,
       "average_score": null,
+      "average_rerank_score": null,
       "passed": true
     },
     {
@@ -94,6 +102,7 @@
       "matched_keywords": [],
       "should_retrieve": false,
       "average_score": null,
+      "average_rerank_score": null,
       "passed": true
     }
   ]

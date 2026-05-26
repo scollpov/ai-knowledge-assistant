@@ -50,6 +50,16 @@ def evaluate():
             if scores else None
         )
 
+        rerank_scores = [
+            result["rerank_score"]
+            for result in results
+        ]
+
+        average_rerank_score = (
+            sum(rerank_scores) / len(rerank_scores)
+            if rerank_scores else None
+        )
+
         matched_keywords = [
             keyword
             for keyword in expected_keywords
@@ -60,6 +70,7 @@ def evaluate():
         print("Expected:", expected_keywords)
         print("Matched:", matched_keywords)
         print("Average distance:", average_score)
+        print("Average rerank score:", average_rerank_score)
 
         required_matches = case.get("required_matches", 2)
         should_retrieve = case.get("should_retrieve", True)
@@ -90,6 +101,7 @@ def evaluate():
             "matched_keywords": matched_keywords,
             "should_retrieve": should_retrieve,
             "average_score": average_score,
+            "average_rerank_score": average_rerank_score,
             "passed": passed
         })
         
