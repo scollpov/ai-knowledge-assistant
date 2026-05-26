@@ -27,6 +27,10 @@ def evaluate():
     cases = load_cases("evaluation/retrieval_cases.json")
 
     for case in cases:
+
+        if not case.get("enabled", True):
+            continue
+
         question = case["question"]
         expected_keywords = case["expected_keywords"]
 

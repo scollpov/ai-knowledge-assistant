@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-26T10:15:59.375506",
-  "total_cases": 7,
-  "passed_cases": 7,
+  "generated_at": "2026-05-26T10:22:29.910554",
+  "total_cases": 6,
+  "passed_cases": 6,
   "accuracy": 100.0,
   "false_positives": 0,
   "false_negatives": 0,
@@ -45,7 +45,7 @@
         "semantic"
       ],
       "should_retrieve": true,
-      "average_score": 1.1731053193410237,
+      "average_score": 1.1732548475265503,
       "average_rerank_score": 1.0,
       "source_ids": [
         "1",
@@ -85,35 +85,6 @@
         "data/documents/ai_concepts.txt",
         "data/documents/ai_concepts.txt",
         "data/documents/gpt4_report.pdf"
-      ],
-      "status": "positive_pass",
-      "failure_reason": null,
-      "passed": true
-    },
-    {
-      "question": "What does ChromaDB do?",
-      "expected_keywords": [
-        "vector",
-        "similarity",
-        "retrieval"
-      ],
-      "matched_keywords": [
-        "vector",
-        "similarity",
-        "retrieval"
-      ],
-      "should_retrieve": true,
-      "average_score": 1.3941352367401123,
-      "average_rerank_score": 0.0,
-      "source_ids": [
-        "852",
-        "853",
-        "2"
-      ],
-      "source_files": [
-        "data/documents/gpt4_report.pdf",
-        "data/documents/gpt4_report.pdf",
-        "data/documents/ai_concepts.txt"
       ],
       "status": "positive_pass",
       "failure_reason": null,

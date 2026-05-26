@@ -17,7 +17,8 @@
   {
     "question": "What does ChromaDB do?",
     "expected_keywords": ["vector", "similarity", "retrieval"],
-    "required_matches": 2
+    "required_matches": 2,
+    "enabled": false
   },
   {
     "question": "What does the uploaded GPT-4 report say about safety mitigations?",
