@@ -19,6 +19,16 @@
       "should_retrieve": true,
       "average_score": 0.5192749897638956,
       "average_rerank_score": 2.0,
+      "source_ids": [
+        "790",
+        "32",
+        "222"
+      ],
+      "source_files": [
+        "data/documents/gpt4_report.pdf",
+        "data/documents/gpt4_report.pdf",
+        "data/documents/gpt4_report.pdf"
+      ],
       "passed": true
     },
     {
@@ -34,6 +44,16 @@
       "should_retrieve": true,
       "average_score": 1.1731053193410237,
       "average_rerank_score": 1.0,
+      "source_ids": [
+        "1",
+        "2",
+        "1154"
+      ],
+      "source_files": [
+        "data/documents/ai_concepts.txt",
+        "data/documents/ai_concepts.txt",
+        "data/documents/gpt4_report.pdf"
+      ],
       "passed": true
     },
     {
@@ -51,6 +71,16 @@
       "should_retrieve": true,
       "average_score": 1.0530569553375244,
       "average_rerank_score": 0.6666666666666666,
+      "source_ids": [
+        "2",
+        "1",
+        "969"
+      ],
+      "source_files": [
+        "data/documents/ai_concepts.txt",
+        "data/documents/ai_concepts.txt",
+        "data/documents/gpt4_report.pdf"
+      ],
       "passed": true
     },
     {
@@ -68,6 +98,16 @@
       "should_retrieve": true,
       "average_score": 1.3941352367401123,
       "average_rerank_score": 0.0,
+      "source_ids": [
+        "852",
+        "853",
+        "2"
+      ],
+      "source_files": [
+        "data/documents/gpt4_report.pdf",
+        "data/documents/gpt4_report.pdf",
+        "data/documents/ai_concepts.txt"
+      ],
       "passed": true
     },
     {
@@ -85,6 +125,16 @@
       "should_retrieve": true,
       "average_score": 0.5433782935142517,
       "average_rerank_score": 4.0,
+      "source_ids": [
+        "547",
+        "30",
+        "207"
+      ],
+      "source_files": [
+        "data/documents/gpt4_report.pdf",
+        "data/documents/gpt4_report.pdf",
+        "data/documents/gpt4_report.pdf"
+      ],
       "passed": true
     },
     {
@@ -94,6 +144,8 @@
       "should_retrieve": false,
       "average_score": null,
       "average_rerank_score": null,
+      "source_ids": [],
+      "source_files": [],
       "passed": true
     },
     {
@@ -103,6 +155,8 @@
       "should_retrieve": false,
       "average_score": null,
       "average_rerank_score": null,
+      "source_ids": [],
+      "source_files": [],
       "passed": true
     }
   ]

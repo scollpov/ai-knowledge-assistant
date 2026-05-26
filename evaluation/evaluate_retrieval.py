@@ -60,6 +60,16 @@ def evaluate():
             if rerank_scores else None
         )
 
+        source_ids = [
+            result["id"]
+            for result in results
+        ]
+
+        source_files = [
+            result["source"]
+            for result in results
+        ]
+
         matched_keywords = [
             keyword
             for keyword in expected_keywords
@@ -71,6 +81,8 @@ def evaluate():
         print("Matched:", matched_keywords)
         print("Average distance:", average_score)
         print("Average rerank score:", average_rerank_score)
+        print("Source IDs:", source_ids)
+        print("Source files:", source_files)
 
         required_matches = case.get("required_matches", 2)
         should_retrieve = case.get("should_retrieve", True)
@@ -102,6 +114,8 @@ def evaluate():
             "should_retrieve": should_retrieve,
             "average_score": average_score,
             "average_rerank_score": average_rerank_score,
+            "source_ids": source_ids,
+            "source_files": source_files,
             "passed": passed
         })
         
