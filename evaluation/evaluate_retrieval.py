@@ -12,6 +12,10 @@ def load_cases(path: str):
 
 
 def evaluate():
+
+    total_cases = 0
+    passed_cases = 0
+
     cases = load_cases("evaluation/retrieval_cases.json")
 
     for case in cases:
@@ -43,16 +47,28 @@ def evaluate():
         required_matches = case.get("required_matches", 2)
         should_retrieve = case.get("should_retrieve", True)
 
-        if not should_retrieve:
-            passed = len(results) == 0
+        total_cases += 1
 
-            print("Result (negative retrieval):", "PASS" if passed else "FAIL")
+        passed = (
+            (should_retrieve and len(matched_keywords) >= required_matches) or
+            (not should_retrieve and len(results) == 0)
+        ) 
+
+        if passed: passed_cases += 1 
+
+        print(
+            "Result ", 
+            "(positive retrieval):" if should_retrieve else "(negative retrieval):", 
+            "PASS" if passed else "FAIL"
+        )
         
-            continue
+    accuracy = (passed_cases / total_cases) * 100 if total_cases else 0
 
-        passed = len(matched_keywords) >= required_matches
+    print("\n====================")
+    print("Evaluation Summary")
+    print("====================")
+    print(f"Passed: {passed_cases}/{total_cases}")
+    print(f"Accuracy: {accuracy:.2f}%")
 
-        print("Result:(positive retrieval)", "PASS" if passed else "FAIL")
-        
 if __name__ == "__main__":
     evaluate()
