@@ -1,9 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from pathlib import Path
+from fastapi.responses import StreamingResponse
+
 from src.rag_service import answer_question
 from src.models import QuestionRequest, QuestionResponse
 from src.config import EMBEDDINGS_FILE
 from src.logger import logger
+from src.chat_service import stream_response
 
 
 app = FastAPI(
@@ -55,3 +58,11 @@ async def ask_question(payload: QuestionRequest):
             status_code=500,
             detail=str(error)
         )
+
+
+@app.post("/ask-stream")
+def ask_stream(request: QuestionRequest):
+    return StreamingResponse(
+        stream_response(request.question),
+        media_type="text/plain"
+    )
