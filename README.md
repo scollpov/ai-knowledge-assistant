@@ -1,35 +1,155 @@
 # AI Knowledge Assistant
 
-A conversational Retrieval-Augmented Generation (RAG) backend service built with FastAPI, OpenAI embeddings, ChromaDB, and semantic search.
+A production-oriented conversational Retrieval-Augmented Generation (RAG) backend service built with FastAPI, OpenAI embeddings, ChromaDB, semantic retrieval, conversational memory, and retrieval evaluation infrastructure.
+
+---
+
+## Overview
+
+AI Knowledge Assistant is an end-to-end AI backend project focused on:
+
+- Retrieval-Augmented Generation (RAG)
+- Conversational AI workflows
+- Long-term memory systems
+- Semantic retrieval and reranking
+- Retrieval evaluation infrastructure
+- AI system observability and regression detection
+
+The project demonstrates real-world AI engineering patterns used in modern LLM applications.
 
 ---
 
 ## Features
 
+### Retrieval & RAG
+
 - ChromaDB vector database
 - Persistent vector storage
-- Metadata-based retrieval filtering
 - OpenAI embeddings
 - Semantic similarity retrieval
+- Metadata-based retrieval filtering
 - Multi-document ingestion
 - PDF document ingestion
+- Incremental document indexing
 - Sentence-aware chunking
 - Chunk overlap strategy
-- Top-k retrieval
 - Retrieval confidence thresholds
+- Top-k retrieval
+- Retrieval reranking pipeline
 - Source attribution
-- Query rewriting for conversational retrieval
-- Conversational memory
+- Conversational query rewriting
+
+### Memory Architecture
+
+- Conversational short-term memory
+- Summarized conversation memory
 - Long-term fact memory
-- Summarized conversation history
-- Reranking pipeline
-- Incremental document indexing
+- User fact extraction
+- Retrieval memory stored in ChromaDB
+
+### Evaluation Infrastructure
+
+- Retrieval evaluation framework
+- Positive retrieval tests
+- Negative retrieval tests
+- False positive tracking
+- False negative tracking
+- Retrieval accuracy metrics
+- Distance metric tracking
+- Rerank metric tracking
+- Persisted evaluation reports
+- Regression detection
+- Retrieval diagnostic metadata
+- Source tracking in reports
+
+### Backend & API
+
 - FastAPI backend
-- Swagger/OpenAPI documentation
-- Typed request/response validation
 - Async API endpoints
+- Typed request/response validation
+- Swagger/OpenAPI documentation
 - Error handling and validation
 - Dockerized deployment support
+
+---
+
+## Architecture
+
+### Conversational Retrieval Pipeline
+
+```txt
+User Question
+    ↓
+Should Retrieve?
+    ↓
+Query Rewriting
+    ↓
+Embedding Generation
+    ↓
+Vector Retrieval
+    ↓
+Keyword Reranking
+    ↓
+Context Assembly
+    ↓
+LLM Response Generation
+    ↓
+Long-Term Memory Extraction
+```
+
+---
+
+## Memory Architecture
+
+The assistant includes multiple memory layers:
+
+- Short-term memory: recent conversation messages
+- Summarized memory: compressed older conversation history
+- Long-term memory: extracted user facts
+- Retrieval memory: document chunks stored in ChromaDB
+
+This architecture allows the assistant to:
+
+- support follow-up questions
+- maintain conversational context
+- remember important user facts
+- combine memory with semantic retrieval
+- reduce hallucinations using retrieved context
+
+---
+
+## Retrieval Evaluation Framework
+
+The project includes a dedicated retrieval evaluation system.
+
+### Supported Evaluation Capabilities
+
+- Positive retrieval evaluation
+- Negative retrieval evaluation
+- Retrieval regression detection
+- Accuracy tracking
+- False positive tracking
+- False negative tracking
+- Retrieval score metrics
+- Rerank score metrics
+- Source tracking
+- Persisted JSON evaluation reports
+
+### Example Evaluation Report
+
+```txt
+{
+  "accuracy": 100.0,
+  "false_positives": 0,
+  "false_negatives": 0
+}
+```
+
+Evaluation reports are persisted in:
+
+```txt
+evaluation/results/
+```
 
 ---
 
@@ -39,6 +159,7 @@ A conversational Retrieval-Augmented Generation (RAG) backend service built with
 src/
     app.py
     rag_service.py
+    retrieval_service.py
     ai_utils.py
     text_processing.py
     config.py
@@ -52,11 +173,22 @@ src/
     memory_extractor.py
     query_rewriter.py
 
+
+evaluation/
+    evaluate_retrieval.py
+    retrieval_cases.json
+
+    results/
+        latest_retrieval_report.json
+
+
+tests/
+    test_memory_extractor.py
+
+
 data/
     documents/
     chroma/
-
-experiments/
 ```
 
 ---
@@ -71,48 +203,7 @@ experiments/
 - Pydantic
 - Uvicorn
 - Docker
-
----
-
-## Memory Architecture
-
-The assistant includes multiple memory layers:
-
-- Short-term memory: recent conversation messages
-- Summarized memory: compressed older conversation history
-- Long-term memory: extracted user facts
-- Retrieval memory: document chunks stored in ChromaDB
-
-This allows the assistant to support follow-up questions, remember important user facts during a session, and combine conversational context with document retrieval.
-
----
-
-## Conversational Retrieval Architecture
-
-The assistant supports conversational RAG workflows through:
-
-- Query rewriting for standalone semantic retrieval
-- Conversational memory integration
-- Long-term fact extraction
-- Retrieval reranking
-- Context summarization
-- Retrieval fallback to conversational answering
-
-Pipeline overview:
-
-```txt
-User Question
-    ↓
-Query Rewriting
-    ↓
-Embedding Generation
-    ↓
-Vector Retrieval
-    ↓
-Reranking
-    ↓
-LLM Generation
-```
+- Pytest
 
 ---
 
@@ -139,15 +230,15 @@ OPENAI_API_KEY=your_api_key
 
 ---
 
-## Ingest Documents
+## Document Ingestion
 
-The ingestion pipeline supports incremental updates:
+The ingestion pipeline supports incremental indexing:
 
 - unchanged documents are skipped
 - changed documents are re-embedded
 - document hashes are stored as metadata
 - stale chunks are automatically removed
-- ChromaDB is used for persistent vector storage
+- vector embeddings are persisted in ChromaDB
 
 Place `.txt` or `.pdf` documents inside:
 
@@ -161,7 +252,7 @@ Run ingestion:
 python -m src.ingest
 ```
 
-Persistent vector data is stored in:
+Persistent vector storage:
 
 ```txt
 data/chroma/
@@ -169,7 +260,7 @@ data/chroma/
 
 ---
 
-## Run CLI Query
+## Run Conversational CLI
 
 ```bash
 python -m src.query
@@ -195,6 +286,36 @@ exit
 
 ---
 
+## Run Retrieval Evaluation
+
+Run retrieval benchmark suite:
+
+```bash
+python -m evaluation.evaluate_retrieval
+```
+
+Evaluation cases are stored in:
+
+```txt
+evaluation/retrieval_cases.json
+```
+
+Generated evaluation reports:
+
+```txt
+evaluation/results/latest_retrieval_report.json
+```
+
+---
+
+## Run Tests
+
+```bash
+pytest
+```
+
+---
+
 ## Run API
 
 Start FastAPI server:
@@ -203,29 +324,11 @@ Start FastAPI server:
 uvicorn src.app:app --reload
 ```
 
-Open interactive API documentation:
+Interactive API documentation:
 
 ```txt
 http://127.0.0.1:8000/docs
 ```
-
----
-
-## Docker Deployment
-
-Build Docker image:
-
-```bash
-docker build -t ai-knowledge-assistant .
-```
-
-Run container:
-
-```bash
-docker run -p 8000:8000 --env-file .env ai-knowledge-assistant
-```
-
-The container automatically supports cloud deployment platforms using the `PORT` environment variable.
 
 ---
 
@@ -259,13 +362,36 @@ The container automatically supports cloud deployment platforms using the `PORT`
 
 ---
 
+## Docker Deployment
+
+Build Docker image:
+
+```bash
+docker build -t ai-knowledge-assistant .
+```
+
+Run container:
+
+```bash
+docker run -p 8000:8000 --env-file .env ai-knowledge-assistant
+```
+
+The container supports cloud deployment platforms using the `PORT` environment variable.
+
+---
+
 ## Future Improvements
 
-- Cloud deployment
-- Persistent database-backed memory
-- Multi-user memory isolation
-- Streaming responses
-- Agent/tool routing
 - Hybrid search
-- Evaluation dashboards
+- Streaming responses
+- Multi-user memory isolation
+- Persistent database-backed memory
+- Agent/tool routing
 - Authentication and authorization
+- CI/CD evaluation automation
+- Evaluation dashboards
+- Retrieval observability dashboards
+- Cloud-native deployment
+- Semantic caching
+- Multi-modal retrieval
+
