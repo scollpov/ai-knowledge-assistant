@@ -2,6 +2,8 @@ from src.memory_storage import (
     load_memory,
     save_memory
 )
+from src.logger import logger
+
 
 memory = load_memory()
 
@@ -17,7 +19,7 @@ def add_fact(fact: str):
 
         save_memory(memory)
 
-        print(f"Fact stored: {memory['facts']}")
+        logger.info(f"Fact stored: {memory['facts']}")
 
 
 def get_facts():

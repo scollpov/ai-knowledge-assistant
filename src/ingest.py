@@ -5,12 +5,15 @@ from src.text_processing import chunk_text
 from src.vector_store import collection
 from src.document_loader import load_document
 from src.hash_utils import generate_content_hash
+from src.logger import logger
+
 
 DOCUMENTS_DIR = Path("data/documents")
 
+
 for document_path in DOCUMENTS_DIR.iterdir():
 
-    print(f"\nProcessing document: {document_path}")
+    logger.info(f"\nProcessing document: {document_path}")
 
     if not document_path.is_file():
         continue
@@ -29,10 +32,10 @@ for document_path in DOCUMENTS_DIR.iterdir():
         existing_metadata = existing_by_source["metadatas"][0]        
 
         if existing_metadata["document_hash"] == document_hash:
-            print(f"Skipping unchanged document: {document_path}")
+            logger.info(f"Skipping unchanged document: {document_path}")
             continue
 
-        print(f"Updating changed document: {document_path}")
+        logger.info(f"Updating changed document: {document_path}")
         collection.delete(ids=existing_by_source["ids"])
 
     chunks = chunk_text(
@@ -42,7 +45,7 @@ for document_path in DOCUMENTS_DIR.iterdir():
 
     for index, chunk in enumerate(chunks):
         
-        print(f"Embedding chunk: {chunk[:80]}...")
+        logger.info(f"Embedding chunk: {chunk[:80]}...")
 
         embedding = get_embedding(chunk)
 
@@ -63,13 +66,15 @@ current_sources = {
     if path.is_file()
 }
 
+
 existing = collection.get()
+
 
 for metadata, chunk_id in zip(existing["metadatas"], existing["ids"]):
     source = metadata["source"]
 
     if source not in current_sources:
-        print(f"Removing stale chunk from deleted document: {source}")
+        logger.info(f"Removing stale chunk from deleted document: {source}")
         collection.delete(ids=[chunk_id])
 
-print("\nIngestion complete.")
+logger.info("\nIngestion complete.")

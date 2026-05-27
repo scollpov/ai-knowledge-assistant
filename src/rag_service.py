@@ -25,6 +25,8 @@ from src.long_term_memory import (
 from src.chat_service import generate_response
 from src.retrieval_router import should_retrieve
 from src.retrieval_service import retrieve_sources
+from src.logger import logger
+
 
 load_dotenv()
 
@@ -39,12 +41,12 @@ def answer_question(
     fact = extract_fact(question)
 
     if fact:
-        print(f"\nRemembered fact: {fact}")
+        logger.info(f"\nRemembered fact: {fact}")
         add_fact(fact)
 
     retrieve = should_retrieve(question)
 
-    print(f"\nShould retrieve: {retrieve}")
+    logger.info(f"\nShould retrieve: {retrieve}")
 
     if not retrieve:
         answer = generate_response(question)
@@ -62,7 +64,7 @@ def answer_question(
         question
     )
 
-    print(f"\nRewritten query: {rewritten_query}")
+    logger.info(f"\nRewritten query: {rewritten_query}")
 
     results = retrieve_sources(
         rewritten_query=rewritten_query, 
