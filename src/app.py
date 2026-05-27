@@ -6,7 +6,7 @@ from src.rag_service import answer_question
 from src.models import QuestionRequest, QuestionResponse
 from src.config import EMBEDDINGS_FILE
 from src.logger import logger
-from src.chat_service import stream_response
+from src.rag_service import stream_answer_question
 
 
 app = FastAPI(
@@ -63,6 +63,9 @@ async def ask_question(payload: QuestionRequest):
 @app.post("/ask-stream")
 def ask_stream(request: QuestionRequest):
     return StreamingResponse(
-        stream_response(request.question),
+        stream_answer_question(
+            question=request.question,
+            filter_metadata=request.filter_metadata
+        ),
         media_type="text/plain"
     )
