@@ -150,14 +150,17 @@ def stream_answer_question(
         for source in sources
     )
 
-    source_files = [
-        source["source"]
+    source_metadata = [
+        {
+            "source": source["source"],
+            "score": source["score"]
+        }
         for source in sources
     ]
 
     yield sse_event(
         "sources",
-        json.dumps(source_files)
+        json.dumps(source_metadata)
     )
 
     yield sse_event("status", "generating")
