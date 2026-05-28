@@ -67,5 +67,5 @@ def ask_stream(request: QuestionRequest):
             question=request.question,
             filter_metadata=request.filter_metadata
         ),
-        media_type="text/plain"
+        media_type="text/event-stream"
     )

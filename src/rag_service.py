@@ -1,3 +1,5 @@
+import json
+
 from openai import OpenAI
 from dotenv import load_dotenv
 from typing import Optional
@@ -30,9 +32,14 @@ from src.chat_service import (
     generate_response
 )
 
+
 load_dotenv()
 
 client = OpenAI()
+
+
+def sse_event(event: str, data: str) -> str:
+    return f"event: {event}\ndata: {data}\n\n"
 
 
 def answer_question(
@@ -57,12 +64,12 @@ def answer_question(
 
     logger.info(f"\nRewritten query: {rewritten_query}")
 
-    results = retrieve_sources(
+    sources = retrieve_sources(
         rewritten_query=rewritten_query, 
         filter_metadata=filter_metadata
     )
 
-    if not retrieve or not results:
+    if not retrieve or not sources:
         answer = generate_response(question)
 
         add_message("user", question)
@@ -72,10 +79,10 @@ def answer_question(
             "answer": answer,
             "sources": []
         } 
-    
+
     context = "\n\n".join(
-        result["text"]
-        for result in results
+        source["text"]
+        for source in sources
     )
 
     answer = generate_response(
@@ -88,7 +95,7 @@ def answer_question(
 
     return {
         "answer": answer,
-        "sources": results
+        "sources": sources
     }
 
 
@@ -112,20 +119,50 @@ def stream_answer_question(
         question
     )
 
+    yield sse_event(
+        "retrieval",
+        "rewriting query"
+    )
+
     logger.info(f"\nRewritten query: {rewritten_query}")
 
-    results = retrieve_sources(
+    yield sse_event(
+        "retrieval",
+        "searching documents"
+    )
+
+    sources = retrieve_sources(
         rewritten_query=rewritten_query,
         filter_metadata=filter_metadata
     )
 
-    if not retrieve or not results:
+    if not retrieve or not sources:
         yield from stream_response(question)
         return
 
-    context = "\n\n".join(
-        result["text"]
-        for result in results
+    yield sse_event(
+        "retrieval",
+        f"retrieved {len(sources)} sources"
     )
 
-    yield from stream_response(question, context)
+    context = "\n\n".join(
+        source["text"]
+        for source in sources
+    )
+
+    source_files = [
+        source["source"]
+        for source in sources
+    ]
+
+    yield sse_event(
+        "sources",
+        json.dumps(source_files)
+    )
+
+    yield sse_event("status", "generating")
+
+    for token in stream_response(question, context):
+        yield sse_event("token", token)
+
+    yield sse_event("done", "[DONE]")
