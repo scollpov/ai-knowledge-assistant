@@ -150,17 +150,23 @@ def stream_answer_question(
         for source in sources
     )
 
-    source_metadata = [
-        {
-            "source": source["source"],
-            "score": source["score"]
-        }
-        for source in sources
-    ]
+    unique_sources = {}
+
+    for source in sources:
+        current = unique_sources.get(source["source"])
+
+        if (
+            current is None
+            or source["score"] < current["score"]
+        ):
+            unique_sources[source["source"]] = {
+                "source": source["source"],
+                "score": source["score"]
+            }
 
     yield sse_event(
         "sources",
-        json.dumps(source_metadata)
+        json.dumps(list(unique_sources.values()))
     )
 
     yield sse_event("status", "generating")
