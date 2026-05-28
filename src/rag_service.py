@@ -162,7 +162,14 @@ def stream_answer_question(
 
     yield sse_event("status", "generating")
 
+    full_answer = ""
+
     for token in stream_response(question, context):
+        full_answer += token
+
         yield sse_event("token", token)
 
+    add_message("user", question)
+    add_message("assistant", full_answer)
+        
     yield sse_event("done", "[DONE]")
