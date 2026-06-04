@@ -4,6 +4,9 @@ from src.config import CHAT_MODEL
 from src.conversation_memory import get_history
 from src.conversation_summary import get_summary
 from src.long_term_memory import get_facts
+from src.logger import logger
+from src.usage_metrics import UsageMetrics
+
 from typing import Generator
 
 
@@ -61,6 +64,18 @@ def generate_response(
         model=CHAT_MODEL,
         temperature=0,
         messages=messages
+    )
+
+    usage = UsageMetrics(
+        prompt_tokens=response.usage.prompt_tokens,
+        completion_tokens=response.usage.completion_tokens,
+        total_tokens=response.usage.total_tokens
+    )
+
+    logger.info(
+        f"Token usage - prompt: {usage.prompt_tokens}, "
+        f"completion: {usage.completion_tokens}, "
+        f"total: {usage.total_tokens}"
     )
 
     return response.choices[0].message.content
