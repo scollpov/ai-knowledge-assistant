@@ -54,3 +54,24 @@ def extract_fact(message: str) -> Optional[str]:
         return None
 
     return result
+
+
+def may_contain_fact(message: str) -> bool:
+    triggers = [
+        "my name is",
+        "my full name is",
+        "i am",
+        "i'm",
+        "i work",
+        "i use",
+        "i prefer",
+        "remember",
+        "from now on"
+    ]
+
+    message_lower = message.lower()
+
+    return any(
+        trigger in message_lower
+        for trigger in triggers
+    )

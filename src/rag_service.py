@@ -20,7 +20,10 @@ from src.conversation_memory import (
     add_message,
     get_history
 )
-from src.memory_extractor import extract_fact
+from src.memory_extractor import (
+    extract_fact,
+    may_contain_fact
+)
 from src.long_term_memory import (
     add_fact,
     get_facts
@@ -48,24 +51,38 @@ def answer_question(
     filter_metadata: Optional[dict] = None
 ) -> dict:
 
+    fact_time = 0
     rewrite_time = 0
     retrieval_time = 0
+    router_time = 0
     generation_time = 0
 
     start_time = time.perf_counter()
 
-    fact = extract_fact(question)
+    fact_start = time.perf_counter()
+
+    fact = None
+
+    if may_contain_fact(question):
+        fact = extract_fact(question)
+
+    fact_time = time.perf_counter() - fact_start
 
     if fact:
         logger.info(f"\nRemembered fact: {fact}")
         add_fact(fact)
 
+    router_start = time.perf_counter()
+
     retrieve = should_retrieve(question)
+
+    router_time = time.perf_counter() - router_start
 
     logger.info(f"\nShould retrieve: {retrieve}")
 
     rewrite_start = time.perf_counter()
 
+    rewritten_quefact_time = 0
     rewritten_query = rewrite_query(
         get_history(),
         question
@@ -131,6 +148,8 @@ def answer_question(
 
     logger.info(
         f"Latency metrics - "
+        f"fact: {fact_time:.3f}s, "
+        f"router: {router_time:.3f}s, "
         f"rewrite: {rewrite_time:.3f}s, "
         f"retrieval: {retrieval_time:.3f}s, "
         f"generation: {generation_time:.3f}s, "
