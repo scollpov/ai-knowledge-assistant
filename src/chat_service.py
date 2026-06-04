@@ -1,6 +1,10 @@
 from openai import OpenAI
 
-from src.config import CHAT_MODEL
+from src.config import (
+    CHAT_MODEL,
+    PROMPT_TOKEN_COST_PER_1M,
+    COMPLETION_TOKEN_COST_PER_1M
+)
 from src.conversation_memory import get_history
 from src.conversation_summary import get_summary
 from src.long_term_memory import get_facts
@@ -66,16 +70,24 @@ def generate_response(
         messages=messages
     )
 
+    estimated_cost_usd = (
+        (response.usage.prompt_tokens / 1_000_000) * PROMPT_TOKEN_COST_PER_1M
+            +
+        (response.usage.completion_tokens / 1_000_000) * COMPLETION_TOKEN_COST_PER_1M
+    )
+
     usage = UsageMetrics(
         prompt_tokens=response.usage.prompt_tokens,
         completion_tokens=response.usage.completion_tokens,
-        total_tokens=response.usage.total_tokens
+        total_tokens=response.usage.total_tokens,
+        estimated_cost_usd=estimated_cost_usd
     )
 
     logger.info(
         f"Token usage - prompt: {usage.prompt_tokens}, "
         f"completion: {usage.completion_tokens}, "
-        f"total: {usage.total_tokens}"
+        f"total: {usage.total_tokens}, "
+        f"estimated_cost_usd: {usage.estimated_cost_usd:.6f}"
     )
 
     return response.choices[0].message.content
