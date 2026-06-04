@@ -1,4 +1,5 @@
 import json
+import time
 
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -47,6 +48,8 @@ def answer_question(
     filter_metadata: Optional[dict] = None
 ) -> dict:
 
+    start_time = time.perf_counter()
+
     fact = extract_fact(question)
 
     if fact:
@@ -75,6 +78,12 @@ def answer_question(
         add_message("user", question)
         add_message("assistant", answer)
 
+        total_time = time.perf_counter() - start_time
+
+        logger.info(
+            f"Request latency - total: {total_time:.3f}s"
+        )
+
         return {
             "answer": answer,
             "sources": []
@@ -92,6 +101,12 @@ def answer_question(
 
     add_message("user", question)
     add_message("assistant", answer)
+
+    total_time = time.perf_counter() - start_time
+
+    logger.info(
+        f"Request latency - total: {total_time:.3f}s"
+    )
 
     return {
         "answer": answer,
