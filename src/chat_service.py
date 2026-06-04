@@ -1,15 +1,13 @@
 from openai import OpenAI
 
-from src.config import (
-    CHAT_MODEL,
-    PROMPT_TOKEN_COST_PER_1M,
-    COMPLETION_TOKEN_COST_PER_1M
-)
+from src.config import CHAT_MODEL
 from src.conversation_memory import get_history
 from src.conversation_summary import get_summary
 from src.long_term_memory import get_facts
 from src.logger import logger
-from src.usage_metrics import UsageMetrics
+from src.usage_metrics import (
+    UsageMetrics,
+    calculate_estimated_cost)
 
 from typing import Generator
 
@@ -60,8 +58,6 @@ def generate_response(
     context: str = ""
 ) -> str:
 
-    response = ""
-
     messages = build_messages(question, context)
 
     response = client.chat.completions.create(
@@ -70,10 +66,9 @@ def generate_response(
         messages=messages
     )
 
-    estimated_cost_usd = (
-        (response.usage.prompt_tokens / 1_000_000) * PROMPT_TOKEN_COST_PER_1M
-            +
-        (response.usage.completion_tokens / 1_000_000) * COMPLETION_TOKEN_COST_PER_1M
+    estimated_cost_usd = calculate_estimated_cost(
+        response.usage.prompt_tokens,
+        response.usage.completion_tokens
     )
 
     usage = UsageMetrics(
@@ -94,18 +89,44 @@ def generate_response(
 
 
 def stream_chat_response(messages: list) -> Generator[str, None, None]:
+
     stream = client.chat.completions.create(
         model=CHAT_MODEL,
         temperature=0,
         messages=messages,
-        stream=True
+        stream=True,
+        stream_options={"include_usage": True}
     )
 
     for chunk in stream:
-        delta = chunk.choices[0].delta
+        if chunk.usage:
 
-        if delta.content:
-            yield delta.content
+            usage = UsageMetrics(
+                prompt_tokens=chunk.usage.prompt_tokens,
+                completion_tokens=chunk.usage.completion_tokens,
+                total_tokens=chunk.usage.total_tokens,
+                estimated_cost_usd=calculate_estimated_cost(
+                    chunk.usage.prompt_tokens,
+                    chunk.usage.completion_tokens
+                )
+            )
+
+            logger.info(
+                f"Streaming token usage - prompt: {usage.prompt_tokens}, "
+                f"completion: {usage.completion_tokens}, "
+                f"total: {usage.total_tokens}, "
+                f"estimated_cost_usd: {usage.estimated_cost_usd:.6f}"
+            )
+
+            continue
+
+
+        if chunk.choices:
+
+            delta = chunk.choices[0].delta
+
+            if delta.content:
+                yield delta.content
 
 
 def stream_response(
