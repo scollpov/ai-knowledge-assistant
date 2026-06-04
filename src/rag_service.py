@@ -48,6 +48,10 @@ def answer_question(
     filter_metadata: Optional[dict] = None
 ) -> dict:
 
+    rewrite_time = 0
+    retrieval_time = 0
+    generation_time = 0
+
     start_time = time.perf_counter()
 
     fact = extract_fact(question)
@@ -60,16 +64,30 @@ def answer_question(
 
     logger.info(f"\nShould retrieve: {retrieve}")
 
+    rewrite_start = time.perf_counter()
+
     rewritten_query = rewrite_query(
         get_history(),
         question
     )
 
+    rewrite_time = (
+        time.perf_counter()
+        - rewrite_start
+    )
+
     logger.info(f"\nRewritten query: {rewritten_query}")
+
+    retrieval_start = time.perf_counter()
 
     sources = retrieve_sources(
         rewritten_query=rewritten_query, 
         filter_metadata=filter_metadata
+    )
+
+    retrieval_time = (
+        time.perf_counter()
+        - retrieval_start
     )
 
     if not retrieve or not sources:
@@ -94,9 +112,16 @@ def answer_question(
         for source in sources
     )
 
+    generation_start = time.perf_counter()
+
     answer = generate_response(
         question,
         context
+    )
+
+    generation_time = (
+        time.perf_counter()
+        - generation_start
     )
 
     add_message("user", question)
@@ -105,7 +130,11 @@ def answer_question(
     total_time = time.perf_counter() - start_time
 
     logger.info(
-        f"Request latency - total: {total_time:.3f}s"
+        f"Latency metrics - "
+        f"rewrite: {rewrite_time:.3f}s, "
+        f"retrieval: {retrieval_time:.3f}s, "
+        f"generation: {generation_time:.3f}s, "
+        f"total: {total_time:.3f}s"
     )
 
     return {
